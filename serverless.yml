@@ -1,0 +1,22 @@
+service: serverless-backend
+frameworkVersion: '3'
+useDotenv: true
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: ap-south-1
+  memorySize: 512
+  environment:
+    DEBUG: ${"jdiwajdiaj"}
+    database: ${env:database,"fallback"}
+
+functions:
+  api:
+    handler: src/index.handler
+    events:
+      - httpApi: '*'
+
+plugins:
+  - serverless-offline
+  - serverless-dotenv-plugin

@@ -1,10 +1,11 @@
 const mongoose = require('mongoose');
-const passwordHashed = require('../utils/hasher');
+const { passwordHashed, passwordCompare } = require('../utils/hasher');
 const defaultUser = require('../../public/default-user.jpg');
+const jwt = require('jsonwebtoken');
 
 const userSchema = new mongoose.Schema(
 	{
-		name: {
+		fullName: {
 			type: String,
 			required: [true, 'Please add a name'],
 			trim: true,
@@ -18,6 +19,7 @@ const userSchema = new mongoose.Schema(
 		phone: {
 			type: Number,
 			unique: true,
+			trim: true,
 		},
 		gender: {
 			type: String,
@@ -56,12 +58,47 @@ const userSchema = new mongoose.Schema(
 
 userSchema.pre('save', async function (next) {
 	try {
+		if (!this.isModified('password')) {
+			return next();
+		}
 		this.password = await passwordHashed(this.password);
 		next();
 	} catch (error) {
 		next(error);
 	}
 });
+
+userSchema.methods.isPasswordCorrect = async function (password) {
+	return await passwordCompare(password, this.password);
+};
+
+userSchema.methods.generateAccessToken = function () {
+	return jwt.sign(
+		{
+			_id: this._id,
+			fullName: this.fullName,
+			email: this.email,
+		},
+		process.env.ACCESS_TOKEN_SECRET,
+		{
+			expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
+		}
+	);
+};
+
+userSchema.methods.generateRefreshToken = function () {
+	return jwt.sign(
+		{
+			_id: this._id,
+			fullName: this.fullName,
+			email: this.email,
+		},
+		process.env.REFRESH_TOKEN_SECRET,
+		{
+			expiresIn: process.env.REFRESH_TOKEN_EXPIRY,
+		}
+	);
+};
 
 const User = mongoose.model('User', userSchema);
 

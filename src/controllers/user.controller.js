@@ -2,7 +2,7 @@ const asyncHandler = require('express-async-handler');
 const User = require('../models/user.models');
 const expressAsyncHandler = require('express-async-handler');
 
-const registerUser = expressAsyncHandler(async (req, res) => {
+const registerUser = asyncHandler(async (req, res) => {
 	const { name, email, password, image } = req.body;
 
 	if (!name || !email || !password) {

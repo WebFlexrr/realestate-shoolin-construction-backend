@@ -1,4 +1,3 @@
-const { configDotenv } = require('dotenv');
 const mongoose = require('mongoose');
 
 let conn = null;

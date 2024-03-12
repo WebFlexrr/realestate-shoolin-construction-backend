@@ -1,11 +1,8 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
+const mongooseAggregatePaginate = require('mongoose-aggregate-paginate-v2');
 
 const amenitiesItemSchema = new mongoose.Schema({
 	name: {
-		type: String,
-		required: true,
-	},
-	Image: {
 		type: String,
 		required: true,
 	},
@@ -20,28 +17,46 @@ const projectSchema = new mongoose.Schema(
 		name: {
 			type: String,
 			required: true,
+			trim: true,
 		},
 		description: {
 			type: String,
+			trim: true,
 		},
-		tags: {
-			type: String,
+		tags: [
+			{
+				type: String,
+				required: true,
+				lowercase: true,
+			},
+		],
+		apartmentType: [
+			{
+				type: Number,
+				required: true,
+			},
+		],
+		totalUnits: {
+			type: Number,
+			required: true,
+		},
+		possessionDate: {
+			type: Date,
+			required: true,
+		},
+		floors: {
+			type: Number,
 			required: true,
 		},
 		address: {
 			type: String,
 			required: true,
+			trim: true,
 		},
 		location: {
-			type: {
-				type: String, // Don't do `{ location: { type: String } }`
-				enum: ['Point'], // 'location.type' must be 'Point'
-				// required: true
-			},
-			coordinates: {
-				type: [Number],
-				required: true,
-			},
+			type: String,
+			required: true,
+			trim: true,
 		},
 		amenities: {
 			type: [amenitiesItemSchema],
@@ -57,17 +72,36 @@ const projectSchema = new mongoose.Schema(
 				},
 			},
 		],
-		brochure: {
-			type: String,
-		},
-		images: [
+		brochure: [
 			{
 				type: String,
 			},
 		],
-		layout: {
+		image: {
+			type: String, //AWS S3 URL
+			required: true,
+		},
+
+		coverImages: [
+			{
+				type: String, //AWS S3 URL
+			},
+		],
+		// layout: {
+		// 	type: mongoose.Schema.Types.ObjectId, //AWS S3 URL
+		// 	ref: 'Layout',
+		// },
+		projectVisit: {
 			type: mongoose.Schema.Types.ObjectId,
-			ref: 'Layout',
+			ref: 'ProjectVisit',
+		},
+		owner: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'User',
+		},
+		isPublished: {
+			type: Boolean,
+			default: false,
 		},
 	},
 	{
@@ -75,4 +109,8 @@ const projectSchema = new mongoose.Schema(
 	}
 );
 
-export const Project = mongoose.model('Project', projectSchema);
+projectSchema.plugin(mongooseAggregatePaginate);
+
+const Project = mongoose.model('Project', projectSchema);
+
+module.exports = { Project };

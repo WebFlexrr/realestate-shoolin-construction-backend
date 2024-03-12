@@ -10,17 +10,17 @@ const enquirySchema = new mongoose.Schema(
 			type: String,
 			required: true,
 		},
-		number: {
-			type: String,
+		phone: {
+			type: Number,
 			required: true,
 		},
 		message: {
 			type: String,
-			
 		},
 		projectId: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'Project',
+			default: null,
 		},
 	},
 	{
@@ -28,4 +28,7 @@ const enquirySchema = new mongoose.Schema(
 	}
 );
 
-module.exports = Enquiry = mongoose.model('Enquiry', enquirySchema);
+
+const Enquiry = mongoose.model('Enquiry', enquirySchema);
+
+module.exports ={Enquiry}

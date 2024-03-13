@@ -1,11 +1,12 @@
-const asyncHandler = (handler) => async (req, res, next) => {
+const asyncHandler = (handler) => (req, res, next) => {
 	try {
-		await handler(req, res, next);
+		return handler(req, res, next);
 	} catch (error) {
 		res.status(error.code || 5000).json({
 			success: false,
 			message: error.message,
 		});
+		next(error);
 	}
 };
 

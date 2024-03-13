@@ -1,11 +1,10 @@
 const mongoose = require('mongoose');
 const { passwordHashed, passwordCompare } = require('../utils/hasher');
-const defaultUser = require('../../public/default-user.jpg');
 const jwt = require('jsonwebtoken');
 
 const userSchema = new mongoose.Schema(
 	{
-		fullName: {
+		name: {
 			type: String,
 			required: [true, 'Please add a name'],
 			trim: true,
@@ -13,12 +12,12 @@ const userSchema = new mongoose.Schema(
 		email: {
 			type: String,
 			required: true,
+			unique: true,
 			lowercase: true,
 			trim: true,
 		},
 		phone: {
 			type: Number,
-			unique: true,
 			trim: true,
 		},
 		gender: {
@@ -33,8 +32,6 @@ const userSchema = new mongoose.Schema(
 		},
 		profilePicture: {
 			type: String, //aws S3 url
-			required: true,
-			default: defaultUser,
 		},
 		admin: {
 			type: Boolean,
@@ -57,15 +54,11 @@ const userSchema = new mongoose.Schema(
 );
 
 userSchema.pre('save', async function (next) {
-	try {
-		if (!this.isModified('password')) {
-			return next();
-		}
-		this.password = await passwordHashed(this.password);
-		next();
-	} catch (error) {
-		next(error);
+	if (!this.isModified('password')) {
+		return next();
 	}
+	this.password = await passwordHashed(this.password);
+	next();
 });
 
 userSchema.methods.isPasswordCorrect = async function (password) {

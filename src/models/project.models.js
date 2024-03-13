@@ -12,6 +12,37 @@ const amenitiesItemSchema = new mongoose.Schema({
 	},
 });
 
+const unitPlanItemsSchema = new mongoose.Schema({
+	bhk: {
+		type: Number,
+		required: true,
+	},
+	flatType: [
+		{
+			name: {
+				type: String,
+				required: true,
+			},
+			image: {
+				type: String,
+				required: true,
+			},
+			carpetArea: {
+				type: Number,
+				required: true,
+			},
+			builtUpArea: {
+				type: Number,
+				required: true,
+			},
+			standardBuiltUpArea: {
+				type: Number,
+				required: true,
+			},
+		},
+	],
+});
+
 const projectSchema = new mongoose.Schema(
 	{
 		name: {
@@ -48,6 +79,11 @@ const projectSchema = new mongoose.Schema(
 			type: Number,
 			required: true,
 		},
+		masterPlan: {
+			type: String,
+			required: true,
+		},
+		unitPlan: [unitPlanItemsSchema],
 		address: {
 			type: String,
 			required: true,

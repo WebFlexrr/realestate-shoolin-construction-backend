@@ -6,7 +6,7 @@ provider:
   name: aws
   runtime: nodejs18.x
   region: ap-south-1
-  memorySize: 512
+  memorySize: 128
   environment:
     database: ${env:database,"fallback"}
 

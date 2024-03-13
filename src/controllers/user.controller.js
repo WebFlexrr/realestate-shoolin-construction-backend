@@ -1,39 +1,44 @@
-const asyncHandler = require('express-async-handler');
-const User = require('../models/user.models');
-const expressAsyncHandler = require('express-async-handler');
+const { asyncHandler } = require('../utils/asyncHandler');
+const { User } = require('../models/user.models');
 
 const registerUser = asyncHandler(async (req, res) => {
-	const { name, email, password, image } = req.body;
+	const { name, email, phone, gender, password, admin } = req.body;
 
-	if (!name || !email || !password) {
+	console.log(req.body);
+	if (!name || !email || !password || !phone || !gender || !admin) {
 		res.status(400);
 		throw new Error('Please Enter all the Fields');
 	}
 	const userExists = await User.findOne({ email });
 
 	if (userExists) {
-		res.status(400);
-		throw new Error('User already exists');
+		return res.status(400).json('User already exists');
 	}
 
-	const user = await User.create({
-		name,
-		email,
-		password,
-		image,
-	});
-
-	if (user) {
-		res.status(201).json({
-			_id: user._id,
-			name: user.name,
-			email: user.email,
-			image: user.image,
-			// token: generateJwtToken(user._id),
+	try {
+		const user = await User.create({
+			name,
+			email,
+			phone,
+			gender,
+			password,
+			admin,
 		});
-	} else {
-		res.status(400);
-		throw new Error('Failed to create the User');
+		console.log(user);
+
+		if (user) {
+			res.status(201).json({
+				_id: user._id,
+				name: user.name,
+				email: user.email,
+				image: user.image,
+				// token: generateJwtToken(user._id),
+			});
+		} else {
+			res.status(400).json('Failed to create the User');
+		}
+	} catch (error) {
+		return res.status(400).json(error);
 	}
 });
 
@@ -52,12 +57,11 @@ const loginUser = asyncHandler(async (req, res) => {
 		name: user.name,
 		email: user.email,
 		image: user.image,
-		token: generateJwtToken(user._id),
+		// token: generateJwtToken(user._id),
 	});
-	// if (user && (await passwordCompare(password, user.password!))) {
+	// if (user && (await passwordCompare(password, user.password))) {
 	// } else {
-	//   return res.status(400).json("Invalid Email or Password");
-	//   // throw new Error("Invalid Email or Password");
+	// 	return res.status(400).json('Invalid Email or Password');
 	// }
 });
 

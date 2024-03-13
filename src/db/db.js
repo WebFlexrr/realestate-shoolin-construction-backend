@@ -13,9 +13,9 @@ const connectDB = async () => {
 		}
 		console.log('Connection already established, reusing the connection.....');
 	} catch (error) {
-		console.log("Mongoose Connection Failed",error);
+		console.log('Mongoose Connection Failed', error);
 		process.exit(1);
 	}
 };
 
-module.exports = {connectDB};
+module.exports = { connectDB };

@@ -1,7 +1,7 @@
 const serverless = require('serverless-http');
 const express = require('express');
-const {connectDB} = require('./db/db');
-const userRoutes = require('./routes/user.routes');
+const { connectDB } = require('./db/db');
+const userRouter = require('./routes/user.routes');
 const projectRoutes = require('./routes/project.routes');
 const enquiryRoutes = require('./routes/enquiry.routes');
 const dotenv = require('dotenv');
@@ -20,21 +20,26 @@ app.use(
 );
 
 app.use(express.json({ limit: '16kb' })); //accept JSON data
-app.use(express.urlencoded());
+app.use(express.urlencoded({ extended: true, limit: '16kb' }));
 app.use(express.static('public'));
 app.use(cookieParser());
 
 connectDB()
-	.then()
+	.then(
+		// app.listen(8000, () => {
+		// 	console.log('server ON');
+		// 	console.log('DB connected');
+		// })
+	)
 	.catch((error) => {
 		console.log('Mongo db connection failed !!!', error);
 	});
 
-app.use('/api/users', userRoutes);
+// Routes require
+
+//Routes Declaration
+app.use('/api/v1/users', userRouter);
 // app.use('/api/project', projectRoutes);
 // app.use('/api/enquiry', enquiryRoutes);
 
-app.listen(3000, () => {
-	console.log('server ON');
-});
-// module.exports.handler = serverless(app);
+module.exports.handler = serverless(app);

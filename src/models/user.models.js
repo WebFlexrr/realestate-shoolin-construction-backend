@@ -35,7 +35,6 @@ const userSchema = new mongoose.Schema(
 		},
 		admin: {
 			type: Boolean,
-			required: true,
 			default: false,
 		},
 		projectVisit: [
@@ -69,8 +68,9 @@ userSchema.methods.generateAccessToken = function () {
 	return jwt.sign(
 		{
 			_id: this._id,
-			fullName: this.fullName,
+			name: this.name,
 			email: this.email,
+			admin: this.admin,
 		},
 		process.env.ACCESS_TOKEN_SECRET,
 		{
@@ -83,8 +83,6 @@ userSchema.methods.generateRefreshToken = function () {
 	return jwt.sign(
 		{
 			_id: this._id,
-			fullName: this.fullName,
-			email: this.email,
 		},
 		process.env.REFRESH_TOKEN_SECRET,
 		{

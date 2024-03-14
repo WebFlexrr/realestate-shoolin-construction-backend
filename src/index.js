@@ -9,7 +9,9 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 
 const app = express();
-dotenv.config();
+dotenv.config({
+	path: './.env',
+});
 
 // Exprees Configuration
 app.use(
@@ -26,10 +28,10 @@ app.use(cookieParser());
 
 connectDB()
 	.then(
-		// app.listen(8000, () => {
-		// 	console.log('server ON');
-		// 	console.log('DB connected');
-		// })
+		app.listen(3000, () => {
+			console.log('server ON');
+			console.log('DB connected');
+		})
 	)
 	.catch((error) => {
 		console.log('Mongo db connection failed !!!', error);

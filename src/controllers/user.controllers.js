@@ -27,9 +27,9 @@ const registerAdminUser = asyncHandler(async (req, res) => {
 	const { name, email, password, phone, gender } = req.body;
 
 	if (
-		[name, email, password, phone, gender].some((field) => field.trim === '')
+		[name, email, password, phone, gender].some((field) => field.trim() === '')
 	) {
-		return res.status(400).json(new ApiError(400, 'all filed is required'));
+		return res.status(400).json(new ApiError(400, 'all field is required'));
 	}
 
 	if (!email.includes('@')) {
@@ -133,7 +133,7 @@ const registerUser = asyncHandler(async (req, res) => {
 	const { name, email, password, phone, gender } = req.body;
 
 	if (
-		[name, email, password, phone, gender].some((field) => field.trim === '')
+		[name, email, password, phone, gender].some((field) => field.trim() === '')
 	) {
 		return res.status(400).json(new ApiError(400, 'all filed is required'));
 	}

@@ -2,8 +2,9 @@ const serverless = require('serverless-http');
 const express = require('express');
 const { connectDB } = require('./db/db');
 const userRouter = require('./routes/user.routes');
-const projectRoutes = require('./routes/project.routes');
-const enquiryRoutes = require('./routes/enquiry.routes');
+const projectRouter = require('./routes/project.routes');
+const projectVisitRouter = require('./routes/projectVisit.routes');
+const enquiryRouter = require('./routes/enquiry.routes');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
@@ -41,7 +42,8 @@ connectDB()
 
 //Routes Declaration
 app.use('/api/v1/users', userRouter);
-// app.use('/api/project', projectRoutes);
-// app.use('/api/enquiry', enquiryRoutes);
+app.use('/api/v1/projects', projectRouter);
+app.use('/api/v1/enquiry', enquiryRouter);
+app.use('/api/v1/projectVisit', projectVisitRouter);
 
 module.exports.handler = serverless(app);

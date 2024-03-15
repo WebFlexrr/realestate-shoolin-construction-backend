@@ -13,13 +13,13 @@ const amenitiesItemSchema = new mongoose.Schema({
 });
 
 const unitPlanItemsSchema = new mongoose.Schema({
-	bhk: {
+	floorNo: {
 		type: Number,
 		required: true,
 	},
 	flatType: [
 		{
-			name: {
+			flatName: {
 				type: String,
 				required: true,
 			},
@@ -27,16 +27,28 @@ const unitPlanItemsSchema = new mongoose.Schema({
 				type: String,
 				required: true,
 			},
-			carpetArea: {
-				type: Number,
+			coveredArea: {
+				type: String,
+				required: true,
+			},
+			stairArea: {
+				type: String,
 				required: true,
 			},
 			builtUpArea: {
-				type: Number,
+				type: String,
 				required: true,
 			},
-			standardBuiltUpArea: {
-				type: Number,
+			serviceArea: {
+				type: String,
+				required: true,
+			},
+			totalArea: {
+				type: String,
+				required: true,
+			},
+			price: {
+				type: String,
 				required: true,
 			},
 		},
@@ -49,8 +61,9 @@ const projectSchema = new mongoose.Schema(
 			type: String,
 			required: true,
 			trim: true,
+			unique: true,
 		},
-		description: {
+		price: {
 			type: String,
 			trim: true,
 		},
@@ -59,12 +72,14 @@ const projectSchema = new mongoose.Schema(
 				type: String,
 				required: true,
 				lowercase: true,
+				trim: true,
 			},
 		],
 		apartmentType: [
 			{
-				type: Number,
+				type: 'String',
 				required: true,
+				trim: true,
 			},
 		],
 		totalUnits: {
@@ -75,28 +90,32 @@ const projectSchema = new mongoose.Schema(
 			type: Date,
 			required: true,
 		},
-		floors: {
-			type: Number,
-			required: true,
-		},
-		masterPlan: {
+		totalFloors: {
 			type: String,
 			required: true,
 		},
+		description: {
+			type: String,
+			trim: true,
+		},
+		amenities: [
+			{
+				type: amenitiesItemSchema,
+				default: null,
+			},
+		],
+		masterPlan: {
+			type: String,
+		},
 		unitPlan: [unitPlanItemsSchema],
+		map: {
+			type: String,
+			trim: true,
+		},
 		address: {
 			type: String,
 			required: true,
 			trim: true,
-		},
-		location: {
-			type: String,
-			required: true,
-			trim: true,
-		},
-		amenities: {
-			type: [amenitiesItemSchema],
-			default: null,
 		},
 		constructionStatus: [
 			{
@@ -108,25 +127,21 @@ const projectSchema = new mongoose.Schema(
 				},
 			},
 		],
-		brochure: [
-			{
-				type: String,
-			},
-		],
-		image: {
-			type: String, //AWS S3 URL
-			required: true,
+		brochure: {
+			type: String,
 		},
 
+		thumbnail: {
+			type: String, //AWS S3 URL
+			required: true,
+			trim: true,
+		},
 		coverImages: [
 			{
 				type: String, //AWS S3 URL
+				trim: true,
 			},
 		],
-		// layout: {
-		// 	type: mongoose.Schema.Types.ObjectId, //AWS S3 URL
-		// 	ref: 'Layout',
-		// },
 		projectVisit: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'ProjectVisit',

@@ -26,7 +26,7 @@ const projectVisitSchema = new mongoose.Schema(
 		},
 		userAddress: {
 			type: String,
-			required: String,
+			required: true,
 		},
 		projectId: {
 			type: mongoose.Schema.Types.ObjectId,

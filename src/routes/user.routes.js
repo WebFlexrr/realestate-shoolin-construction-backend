@@ -7,9 +7,8 @@ const {
 	registerAdminUser,
 	loginAdminUser,
 	logoutUser,
-} = require('../controllers/user.controller');
+} = require('../controllers/user.controllers');
 
-const { putObjectUrl } = require('../utils/aws-s3-methods');
 const { verifyJWT } = require('../middlewares/auth.middleware');
 
 const router = Router();
@@ -22,7 +21,7 @@ router.route('/signup').post(registerUser);
 
 //secure routes
 router.route('/editUser').post(verifyJWT,loginUser);
-router.route('/userDetails').post(verifyJWT,loginUser);
+router.route('/userDetails').get(verifyJWT,loginUser);
 router.route('/logout').post(verifyJWT, logoutUser);
 
 //file upload

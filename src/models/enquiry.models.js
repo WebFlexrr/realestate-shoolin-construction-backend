@@ -17,18 +17,17 @@ const enquirySchema = new mongoose.Schema(
 		message: {
 			type: String,
 		},
-		projectId: {
-			type: mongoose.Schema.Types.ObjectId,
-			ref: 'Project',
-			default: null,
-		},
+		// projectId: {
+		// 	type: mongoose.Schema.Types.ObjectId,
+		// 	ref: 'Project',
+		// 	default: null,
+		// },
 	},
 	{
 		timestamps: true,
 	}
 );
 
-
 const Enquiry = mongoose.model('Enquiry', enquirySchema);
 
-module.exports ={Enquiry}
+module.exports = { Enquiry };

@@ -16,6 +16,16 @@ const getObjectUrl = async (key) => {
 };
 
 const putObjectUrl = async (path, filename, contentType) => {
+	// const command = new PutObjectCommand({
+	// 	Bucket: process.env.AWS_S3_BUCKET_NAME,
+	// 	Key: `${path}/${filename}`,
+	// 	ContentType: contentType,
+	// });
+
+	// const response = await s3Client.send(command);
+
+	// return response;
+
 	const command = new PutObjectCommand({
 		Bucket: process.env.AWS_S3_BUCKET_NAME,
 		Key: `${path}/${filename}`,

@@ -13,46 +13,46 @@ const amenitiesItemSchema = new mongoose.Schema({
 });
 
 const unitPlanItemsSchema = new mongoose.Schema({
+	flatName: {
+		type: String,
+		required: true,
+	},
 	floorNo: {
 		type: Number,
 		required: true,
 	},
-	flatType: [
-		{
-			flatName: {
-				type: String,
-				required: true,
-			},
-			image: {
-				type: String,
-				required: true,
-			},
-			coveredArea: {
-				type: String,
-				required: true,
-			},
-			stairArea: {
-				type: String,
-				required: true,
-			},
-			builtUpArea: {
-				type: String,
-				required: true,
-			},
-			serviceArea: {
-				type: String,
-				required: true,
-			},
-			totalArea: {
-				type: String,
-				required: true,
-			},
-			price: {
-				type: String,
-				required: true,
-			},
-		},
-	],
+	image: {
+		type: String,
+		required: true,
+	},
+	coveredArea: {
+		type: String,
+		// required: true,
+	},
+	stairArea: {
+		type: String,
+		// required: true,
+	},
+	builtUpArea: {
+		type: String,
+		// required: true,
+	},
+	serviceArea: {
+		type: String,
+		// required: true,
+	},
+	totalArea: {
+		type: String,
+		// required: true,
+	},
+	sold: {
+		type: Boolean,
+		required: true,
+	},
+	price: {
+		type: String,
+		required: true,
+	},
 });
 
 const projectSchema = new mongoose.Schema(
@@ -67,23 +67,30 @@ const projectSchema = new mongoose.Schema(
 			type: String,
 			trim: true,
 		},
-		tags: [
-			{
-				type: String,
-				required: true,
-				lowercase: true,
-				trim: true,
-			},
-		],
+
+		propertyType: {
+			type: String,
+			required: true,
+			lowercase: true,
+			trim: true,
+		},
+
+		status: {
+			type: String,
+			required: true,
+			lowercase: true,
+			trim: true,
+		},
+
 		apartmentType: [
 			{
-				type: 'String',
+				type: String,
 				required: true,
 				trim: true,
 			},
 		],
 		totalUnits: {
-			type: Number,
+			type: String,
 			required: true,
 		},
 		possessionDate: {
@@ -100,8 +107,10 @@ const projectSchema = new mongoose.Schema(
 		},
 		amenities: [
 			{
-				type: amenitiesItemSchema,
-				default: null,
+				type: String,
+				required: true,
+				lowercase: true,
+				trim: true,
 			},
 		],
 		masterPlan: {
@@ -133,8 +142,7 @@ const projectSchema = new mongoose.Schema(
 
 		thumbnail: {
 			type: String, //AWS S3 URL
-			required: true,
-			trim: true,
+			// required: true,
 		},
 		coverImages: [
 			{
@@ -142,14 +150,16 @@ const projectSchema = new mongoose.Schema(
 				trim: true,
 			},
 		],
-		projectVisit: {
-			type: mongoose.Schema.Types.ObjectId,
-			ref: 'ProjectVisit',
-		},
-		owner: {
-			type: mongoose.Schema.Types.ObjectId,
-			ref: 'User',
-		},
+		projectVisit: [
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: 'ProjectVisit',
+			},
+		],
+		// owner: {
+		// 	type: mongoose.Schema.Types.ObjectId,
+		// 	ref: 'User',
+		// },
 		isPublished: {
 			type: Boolean,
 			default: false,

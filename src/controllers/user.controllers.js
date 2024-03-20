@@ -52,7 +52,7 @@ const registerAdminUser = asyncHandler(async (req, res) => {
 		phone,
 		gender,
 		password,
-		admin:true,
+		admin: true,
 	});
 
 	const createdUser = await User.findById(user._id).select(
@@ -122,6 +122,7 @@ const loginAdminUser = asyncHandler(async (req, res) => {
 					user: loggedInUser,
 					accessToken,
 					refreshToken,
+					FRONTEND_URL: process.env.FRONTEND_URL,
 				},
 				'User logged In Successfully'
 			)
@@ -255,6 +256,7 @@ const logoutUser = asyncHandler(async (req, res) => {
 
 const getImage = asyncHandler(async (req, res) => {
 	const { key } = req.body;
+	console.log(req.body);
 
 	try {
 		const objectUrl = await getObjectUrl(key);
@@ -264,6 +266,7 @@ const getImage = asyncHandler(async (req, res) => {
 		throw new Error(error);
 	}
 });
+
 const putUpload = asyncHandler(async (req, res) => {
 	const { path, filename, contentType } = req.body;
 	try {

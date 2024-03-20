@@ -15,12 +15,25 @@ dotenv.config({
 });
 
 // Exprees Configuration
-app.use(
-	cors({
-		origin: process.env.CORS_ORIGIN,
-		credentials: true,
-	})
-);
+const corsConfig = {
+	origin: process.env.CORS_ORIGIN,
+	credentials: true,
+	optionSuccessStatus: 200,
+};
+app.use(cors(corsConfig));
+var allowedDomains = [process.env.FRONTEND_URL, process.env.ADMIN_FRONTEND_URL];
+app.use(cors({
+  origin: function (origin, callback) {
+    // bypass the requests with no origin (like curl requests, mobile apps, etc )
+    if (!origin) return callback(null, true);
+ 
+    if (allowedDomains.indexOf(origin) === -1) {
+      var msg = `This site ${origin} does not have an access. Only specific domains are allowed to access it.`;
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  }
+}));
 
 app.use(express.json({ limit: '16kb' })); //accept JSON data
 app.use(express.urlencoded({ extended: true, limit: '16kb' }));
@@ -29,10 +42,10 @@ app.use(cookieParser());
 
 connectDB()
 	.then(
-		app.listen(3000, () => {
-			console.log('server ON');
-			console.log('DB connected');
-		})
+		// app.listen(8000, () => {
+		// 	console.log('server ON');
+		// 	console.log('DB connected');
+		// })
 	)
 	.catch((error) => {
 		console.log('Mongo db connection failed !!!', error);

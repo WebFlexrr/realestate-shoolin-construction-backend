@@ -7,14 +7,25 @@ provider:
   runtime: nodejs18.x
   region: ap-south-1
   memorySize: 512
-  environment:
-    database: ${env:database,"fallback"}
+  timeout: 10
+  # environment:
+    # database: ${env:database,"fallback"}
+
 
 functions:
   api:
     handler: src/index.handler
     events:
-      - httpApi: '*'
+      - httpApi: "*"
+          # path: '/{default*}'
+          # method: any
+          # cors:
+          #   allowedOrigins: ${env:CORS_ORIGIN,"*"}
+          #   allowedHeaders:
+          #     - Content-Type
+          #     - Authorization
+          #   allowCredentials: true
+      
 
 plugins:
   - serverless-offline

@@ -6,6 +6,7 @@ const {
 	getSingleProject,
 	deleteSingleProject,
 	deleteAllProject,
+	editProject,
 } = require('../controllers/project.controllers');
 const { createProjectVisit, getAllProjectVisits } = require('../controllers/projectVisit.controllers');
 
@@ -15,7 +16,7 @@ const router = Router();
 router.route('/createProjectVisit').post(verifyJWT, createProjectVisit);
 
 //Edit the Project
-// router.route('/editProject').post(verifyJWT,editProject);
+router.route('/editProject').post(verifyJWT,editProject);
 
 // Get Details
 router.route('/getAllProjectVisits').get(verifyJWT, getAllProjectVisits);

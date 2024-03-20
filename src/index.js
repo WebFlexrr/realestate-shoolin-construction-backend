@@ -9,16 +9,15 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 
-const app = express();
 dotenv.config({
 	path: './.env',
 });
 
+const app = express();
 // Exprees Configuration
 const corsConfig = {
-	origin: process.env.ADMIN_FRONTEND_URL,
-	credentials: true,
-	
+	origin: '*',
+	// credentials: true,
 };
 app.use(cors(corsConfig));
 var allowedDomains = [process.env.FRONTEND_URL, process.env.ADMIN_FRONTEND_URL];
@@ -42,7 +41,7 @@ app.use(express.urlencoded({ extended: true, limit: '16kb' }));
 app.use(express.static('public'));
 app.use(cookieParser());
 
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 3000;
 connectDB()
 	.then(
 		app.listen(PORT, () => {

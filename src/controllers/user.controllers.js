@@ -1,8 +1,13 @@
 const { asyncHandler } = require('../utils/asyncHandler');
 const { User } = require('../models/user.models');
 const ApiError = require('../utils/ApiError');
-const { getObjectUrl, putObjectUrl } = require('../utils/aws-s3-methods');
+const {
+	getObjectUrl,
+	putObjectUrl,
+	generatePutObjectUrl,
+} = require('../utils/aws-s3-methods');
 const { ApiResponse } = require('../utils/ApiResponse');
+const { randomUUID } = require('crypto');
 
 const generateAccessAndRefreshToken = async (userId) => {
 	try {
@@ -37,13 +42,13 @@ const registerAdminUser = asyncHandler(async (req, res) => {
 	}
 
 	const existedUser = await User.findOne({
-		$or: [{ email }, { admin: true }],
+		$or: [{ email }],
 	});
 
 	if (existedUser) {
 		return res
 			.status(409)
-			.json(new ApiError(409, 'User with email or phone already exists'));
+			.json(new ApiError(409, 'User with email already exists'));
 	}
 
 	const user = await User.create({
@@ -255,16 +260,17 @@ const logoutUser = asyncHandler(async (req, res) => {
 });
 
 const getImage = asyncHandler(async (req, res) => {
-	const { key } = req.body;
-	console.log(req.body);
+	// const { key } = req.body;
+	console.log(req.file);
 
-	try {
-		const objectUrl = await getObjectUrl(key);
-		console.log('assets/default-avatar-icon.jpg ---->', objectUrl);
-		res.status(200).json(objectUrl);
-	} catch (error) {
-		throw new Error(error);
-	}
+	// try {
+	// 	const objectUrl = await getObjectUrl(key);
+	// 	console.log('assets/default-avatar-icon.jpg ---->', objectUrl);
+	// 	res.status(200).json(objectUrl);
+	// } catch (error) {
+	// 	throw new Error(error);
+	// }
+	return res.send(req.file);
 });
 
 const putUpload = asyncHandler(async (req, res) => {
@@ -278,6 +284,31 @@ const putUpload = asyncHandler(async (req, res) => {
 	}
 });
 
+const generateUploadUrl = asyncHandler(async (req, res) => {
+	const { contentType } = req.body;
+	console.log(contentType);
+
+	// const ex = `${req.query.contentType}`.split('/')[1];
+	const ex = contentType.split('/')[1];
+
+	
+	const fileName = `user-${randomUUID()}.${ex}`;
+	try {
+		const url = await generatePutObjectUrl(
+			'asset/users-uploads',
+			fileName,
+			contentType
+		);
+
+		return res.status(200).json(new ApiResponse(200, url));
+	} catch (error) {
+		console.log(error);
+		return res
+			.status(500)
+			.json(new ApiError(500, 'Upload Url not generated', error));
+	}
+});
+
 module.exports = {
 	registerUser,
 	loginUser,
@@ -286,4 +317,5 @@ module.exports = {
 	logoutUser,
 	getImage,
 	putUpload,
+	generateUploadUrl,
 };

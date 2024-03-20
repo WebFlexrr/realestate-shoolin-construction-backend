@@ -7,15 +7,18 @@ const {
 	registerAdminUser,
 	loginAdminUser,
 	logoutUser,
+	preAssignUrl,
+	generateUploadUrl,
 } = require('../controllers/user.controllers');
 
 const { verifyJWT } = require('../middlewares/auth.middleware');
 const multer = require('multer');
+const { upload } = require('../middlewares/multer.middleware');
 
 const router = Router();
 
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
+// const storage = multer.memoryStorage();
+// const upload = multer({ storage: storage });
 //unsecure routes
 router.route('/adminLogin').post(loginAdminUser);
 router.route('/adminSignup').post(registerAdminUser);
@@ -28,7 +31,8 @@ router.route('/userDetails').get(verifyJWT, loginUser);
 router.route('/logout').post(verifyJWT, logoutUser);
 
 //file upload
-router.route('/getImg').get( getImage);
-router.route('/uploads').post(putUpload);
+router.route('/uploads').post(upload.single('pic'), getImage);
+router.route('/generateUploadUrl').post(generateUploadUrl);
+// router.route('/uploads').post(putUpload);
 
 module.exports = router;

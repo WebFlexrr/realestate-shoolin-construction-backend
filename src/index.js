@@ -42,10 +42,10 @@ app.use(cookieParser());
 
 connectDB()
 	.then(
-		// app.listen(8000, () => {
-		// 	console.log('server ON');
-		// 	console.log('DB connected');
-		// })
+		app.listen(PORT, () => {
+			console.log('server ON');
+			console.log('DB connected');
+		})
 	)
 	.catch((error) => {
 		console.log('Mongo db connection failed !!!', error);

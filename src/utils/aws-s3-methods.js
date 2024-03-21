@@ -16,11 +16,11 @@ const getObjectUrl = async (key) => {
 	}
 };
 
-const generatePutObjectUrl = async (path, filename, contentType) => {
+const generatePutObjectUrl = async (key, contentType) => {
 console.log('url ---->', process.env.S3_BUCKET_NAME);
 	const command = new PutObjectCommand({
 		Bucket: process.env.S3_BUCKET_NAME,
-		Key: `${path}/${filename}`,
+		Key: key,
 		ContentType: contentType,
 	});
 

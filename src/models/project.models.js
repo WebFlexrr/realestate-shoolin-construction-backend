@@ -138,10 +138,12 @@ const projectSchema = new mongoose.Schema(
 		],
 		brochure: {
 			type: String,
+			trim: true,
 		},
 
 		thumbnail: {
 			type: String, //AWS S3 URL
+			trim: true,
 			// required: true,
 		},
 		coverImages: [

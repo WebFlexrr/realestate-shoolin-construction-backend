@@ -3,7 +3,8 @@ const { Project } = require('../models/project.models');
 const ApiError = require('../utils/ApiError');
 const { asyncHandler } = require('../utils/asyncHandler');
 const { ApiResponse } = require('../utils/ApiResponse');
-const { putObjectUrl } = require('../utils/aws-s3-methods');
+const { randomUUID } = require('crypto');
+const { generatePutObjectUrl } = require('../utils/aws-s3-methods');
 
 //Create A New Project
 const createProject = asyncHandler(async (req, res) => {
@@ -96,9 +97,11 @@ const getAllProjects = asyncHandler(async (req, res) => {
 
 // Get only specific Project
 const getSingleProject = asyncHandler(async (req, res) => {
-	const projectName = req.params['name'];
+	// const projectName = req.params['name'];
+	const projectId = req.params['id'];
 	try {
-		const getProject = await Project.findOne({ name: projectName });
+		// const getProject = await Project.findOne({ name: projectName });
+		const getProject = await Project.findById( projectId );
 
 		if (!getProject) {
 			return res.status(400).json(new ApiError(400, 'Project is not Existed'));
@@ -233,14 +236,48 @@ const deleteSingleProject = asyncHandler(async (req, res) => {
 	}
 });
 
-const projectImagesUpload = asyncHandler(async (req, res) => {
-	const { path, filename, contentType } = req.body;
+// const projectImagesUpload = asyncHandler(async (req, res) => {
+// 	const { path, filename, contentType } = req.body;
+// 	try {
+// 		const objectUrl = await putObjectUrl(path, filename, contentType);
+// 		console.log('assets/default-avatar-icon.jpg ---->', objectUrl);
+// 		res.status(200).json(objectUrl);
+// 	} catch (error) {
+// 		throw new Error(error);
+// 	}
+// });
+
+const generateUploadUrl = asyncHandler(async (req, res) => {
+	const { fileType } = req.body;
+	console.log(fileType);
+
+	let key;
+	if (fileType.split('/')[0] === 'image') {
+		const ex = fileType.split('/')[1];
+
+		key = `asset/projects-uploads/images/project-image-${randomUUID()}.${ex}`;
+	} else if (fileType === 'application/pdf') {
+		const ex = fileType.split('/')[1];
+
+		key = `asset/projects-uploads/documents/project-document-${randomUUID()}.${ex}`;
+	} else if (fileType.split('/')[0] === 'video') {
+		const ex = fileType.split('/')[1];
+
+		key = `asset/projects-uploads/videos/project-video-${randomUUID()}.${ex}`;
+	} else {
+		return res.status(400).json(new ApiError(400, 'Given file Type is not'));
+	}
+
 	try {
-		const objectUrl = await putObjectUrl(path, filename, contentType);
-		console.log('assets/default-avatar-icon.jpg ---->', objectUrl);
-		res.status(200).json(objectUrl);
+		const uploadUrl = await generatePutObjectUrl(key, fileType);
+		const url = uploadUrl.split('?')[0];
+
+		return res.status(200).json(new ApiResponse(200, { uploadUrl, url, key }));
 	} catch (error) {
-		throw new Error(error);
+		console.log(error);
+		return res
+			.status(500)
+			.json(new ApiError(500, 'Upload Url not generated', error));
 	}
 });
 
@@ -251,5 +288,6 @@ module.exports = {
 	editProject,
 	deleteAllProject,
 	deleteSingleProject,
-	projectImagesUpload,
+	// projectImagesUpload,
+	generateUploadUrl,
 };

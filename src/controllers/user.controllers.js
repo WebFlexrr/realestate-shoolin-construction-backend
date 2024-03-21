@@ -291,16 +291,11 @@ const generateUploadUrl = asyncHandler(async (req, res) => {
 	// const ex = `${req.query.contentType}`.split('/')[1];
 	const ex = contentType.split('/')[1];
 
-	
-	const fileName = `user-${randomUUID()}.${ex}`;
+	const key = `asset/users-uploads/user-${randomUUID()}.${ex}`;
 	try {
-		const url = await generatePutObjectUrl(
-			'asset/users-uploads',
-			fileName,
-			contentType
-		);
+		const uploadUrl = await generatePutObjectUrl(key, contentType);
 
-		return res.status(200).json(new ApiResponse(200, url));
+		return res.status(200).json(new ApiResponse(200, { uploadUrl, key }));
 	} catch (error) {
 		console.log(error);
 		return res

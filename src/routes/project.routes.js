@@ -7,7 +7,8 @@ const {
     deleteSingleProject,
     deleteAllProject,
 	editProject,
-	projectImagesUpload,
+	// projectImagesUpload,
+	generateUploadUrl,
 } = require('../controllers/project.controllers');
 
 const router = Router();
@@ -20,7 +21,7 @@ router.route('/editProject').patch(verifyJWT,editProject);
 
 // Get Details
 router.route('/getAllProjects').get(verifyJWT, getAllProjects);
-router.route('/getSingleProject/:name').get(verifyJWT, getSingleProject);
+router.route('/getSingleProject/:id').get(verifyJWT, getSingleProject);
 
 //Delete
 router.route('/deleteSingleProject').delete(verifyJWT, deleteSingleProject);
@@ -28,6 +29,7 @@ router.route('/deleteAllProject').delete(verifyJWT, deleteAllProject);
 
 //file upload
 // router.route('/getImg').get(getImage);
-router.route('/uploads').post(projectImagesUpload);
+// router.route('/uploads').post(projectImagesUpload);
+router.route('/generateUploadUrl').post(generateUploadUrl);
 
 module.exports = router;

@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const mongooseAggregatePaginate = require('mongoose-aggregate-paginate-v2');
+const { createSlug } = require('../utils/createSlug');
 
 const amenitiesItemSchema = new mongoose.Schema({
 	name: {
@@ -61,20 +62,21 @@ const projectSchema = new mongoose.Schema(
 			type: String,
 			required: true,
 			trim: true,
+		},
+		slug: {
+			type: String,
 			unique: true,
 		},
 		price: {
 			type: String,
 			trim: true,
 		},
-
 		propertyType: {
 			type: String,
 			required: true,
 			lowercase: true,
 			trim: true,
 		},
-
 		status: {
 			type: String,
 			required: true,
@@ -171,6 +173,11 @@ const projectSchema = new mongoose.Schema(
 		timestamps: true,
 	}
 );
+
+projectSchema.pre('save', async function (next) {
+	this.slug = createSlug(this.name);
+	next();
+});
 
 projectSchema.plugin(mongooseAggregatePaginate);
 

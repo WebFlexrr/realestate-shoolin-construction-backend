@@ -8,7 +8,7 @@ const { verifyJWT } = require('../middlewares/auth.middleware');
 const router = Router();
 
 router.route('/createEnquiry').post(createAnEnquiry);
-router.route('/getAllEnquiry').get(verifyJWT, getAllEnquiry);
+router.route('/getAllEnquiry').get(getAllEnquiry);
 router.route('/editEnquiry').put();
 
 module.exports = router;

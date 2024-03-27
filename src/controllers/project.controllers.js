@@ -5,6 +5,7 @@ const { asyncHandler } = require('../utils/asyncHandler');
 const { ApiResponse } = require('../utils/ApiResponse');
 const { randomUUID } = require('crypto');
 const { generatePutObjectUrl } = require('../utils/aws-s3-methods');
+const { createSlug } = require('../utils/createSlug');
 
 //Create A New Project
 const createProject = asyncHandler(async (req, res) => {
@@ -29,7 +30,10 @@ const createProject = asyncHandler(async (req, res) => {
 		isPublished,
 	} = req.body;
 
-	const existedProject = await Project.findOne({ name });
+	//Creating slug
+	const slug = createSlug(name);
+
+	const existedProject = await Project.findOne({ slug });
 
 	if (existedProject) {
 		return res.status(400).json(new ApiError(404, 'Project already Exists'));
@@ -37,6 +41,7 @@ const createProject = asyncHandler(async (req, res) => {
 	try {
 		const createdProject = await Project.create({
 			name,
+			slug,
 			price,
 			propertyType,
 			status,
@@ -73,11 +78,8 @@ const createProject = asyncHandler(async (req, res) => {
 				new ApiResponse(200, createdProject, 'Project Successfully created..')
 			);
 	} catch (error) {
-		return res
-			.status(500)
-			.json(
-				new ApiError(500, 'Internal Error happened. Please retry!!!!', error)
-			);
+		console.log(error);
+		return res.status(500).json(new ApiError(500, error._message, error));
 	}
 });
 
@@ -85,6 +87,12 @@ const createProject = asyncHandler(async (req, res) => {
 const getAllProjects = asyncHandler(async (req, res) => {
 	try {
 		const allProjects = await Project.find({});
+
+		if (!allProjects) {
+			return res
+				.status(200)
+				.json(new ApiResponse(200, allProjects, 'No Project there'));
+		}
 		return res.status(200).json(new ApiResponse(200, allProjects));
 	} catch (error) {
 		return res
@@ -98,10 +106,12 @@ const getAllProjects = asyncHandler(async (req, res) => {
 // Get only specific Project
 const getSingleProject = asyncHandler(async (req, res) => {
 	// const projectName = req.params['name'];
-	const projectId = req.params['id'];
+	const projectSlug = req.params['slug'];
 	try {
 		// const getProject = await Project.findOne({ name: projectName });
-		const getProject = await Project.findById( projectId );
+		const getProject = await Project.findOne({
+			slug: projectSlug,
+		});
 
 		if (!getProject) {
 			return res.status(400).json(new ApiError(400, 'Project is not Existed'));
@@ -120,7 +130,7 @@ const getSingleProject = asyncHandler(async (req, res) => {
 //Edit a project
 const editProject = asyncHandler(async (req, res) => {
 	const {
-		_id,
+		id,
 		name,
 		price,
 		tags,
@@ -140,22 +150,23 @@ const editProject = asyncHandler(async (req, res) => {
 		isPublished,
 	} = req.body;
 
+	//new slug
+	const slug = createSlug(name);
+
 	if (!req.user.admin) {
 		return res
 			.status(400)
 			.json(
-				new ApiError(
-					400,
-					'this is not a admin account, Action could not perform'
-				)
+				new ApiError(400, 'this is not a admin account, Action can perform')
 			);
 	}
 
 	try {
 		const updatedProject = await Project.findByIdAndUpdate(
-			_id,
+			id,
 			{
 				name,
+				slug,
 				price,
 				tags,
 				brochure,
@@ -200,6 +211,13 @@ const editProject = asyncHandler(async (req, res) => {
 
 //Delete only Specific Project
 const deleteAllProject = asyncHandler(async (req, res) => {
+	if (!req.user.admin) {
+		return res
+			.status(400)
+			.json(
+				new ApiError(400, 'this is not a admin account, Action can perform')
+			);
+	}
 	try {
 		const result = await Project.deleteMany({});
 		return res
@@ -215,15 +233,27 @@ const deleteAllProject = asyncHandler(async (req, res) => {
 });
 
 //Delete only Specific Project
-const deleteSingleProject = asyncHandler(async (req, res) => {
+const deleteProject = asyncHandler(async (req, res) => {
 	const { id } = req.body;
 
-	if (id.trim() === '') {
+	//Array of ids
+	const idsToDelete = id;
+	
+
+	if (!req.user.admin) {
+		return res
+			.status(400)
+			.json(
+				new ApiError(400, 'this is not a admin account, Action can perform')
+			);
+	}
+
+	if (idsToDelete.length === 0) {
 		return res.status(400).json(new ApiError(400, 'Given Id is not Valid'));
 	}
 
 	try {
-		const result = await Project.deleteOne({ _id: id });
+		const result = await Project.deleteMany({ _id: { $in: idsToDelete } });
 		return res
 			.status(200)
 			.json(new ApiResponse(200, result, 'Single Project Delete Successful'));
@@ -287,7 +317,7 @@ module.exports = {
 	getSingleProject,
 	editProject,
 	deleteAllProject,
-	deleteSingleProject,
+	deleteProject,
 	// projectImagesUpload,
 	generateUploadUrl,
 };

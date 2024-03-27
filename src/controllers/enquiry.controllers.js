@@ -5,8 +5,9 @@ const { asyncHandler } = require('../utils/asyncHandler');
 
 const createAnEnquiry = asyncHandler(async (req, res) => {
 	const { name, email, phone, message } = req.body;
+	console.log(req.body);
 
-	if ([name, email, phone, message].some((field) => field.trim() === '')) {
+	if (!name && !email && !phone) {
 		return res.status(400).json(new ApiError(400, 'all field is required'));
 	}
 

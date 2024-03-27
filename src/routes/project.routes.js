@@ -4,7 +4,7 @@ const {
 	createProject,
 	getAllProjects,
 	getSingleProject,
-    deleteSingleProject,
+	deleteProject,
     deleteAllProject,
 	editProject,
 	// projectImagesUpload,
@@ -20,12 +20,12 @@ router.route('/createProject').post(verifyJWT, createProject);
 router.route('/editProject').patch(verifyJWT,editProject);
 
 // Get Details
-router.route('/getAllProjects').get(verifyJWT, getAllProjects);
-router.route('/getSingleProject/:id').get(verifyJWT, getSingleProject);
+router.route('/getAllProjects').get(getAllProjects);
+router.route('/getSingleProject/:slug').get(getSingleProject);
 
 //Delete
-router.route('/deleteSingleProject').delete(verifyJWT, deleteSingleProject);
 router.route('/deleteAllProject').delete(verifyJWT, deleteAllProject);
+router.route('/deleteProject').delete(verifyJWT, deleteProject);
 
 //file upload
 // router.route('/getImg').get(getImage);
